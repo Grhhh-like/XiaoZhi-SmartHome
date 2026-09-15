@@ -10,7 +10,7 @@
 static const char *TAG = "lcd_ui";
 
 static ui_state_t s_state = UI_STATE_IDLE;
-static const char *s_face = "default";
+static char s_face[16] = "default";
 static char s_text[64] = {0};
 static uint32_t s_frame = 0;
 
