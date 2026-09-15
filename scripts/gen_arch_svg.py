@@ -70,7 +70,7 @@ SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewB
     <rect x="510" y="255" width="180" height="46" rx="8" fill="#ffffff22"/>
     <text x="600" y="283" text-anchor="middle">NAS 私有云</text>
     <rect x="710" y="255" width="200" height="46" rx="8" fill="#ffffff22"/>
-    <text x="810" y="283" text-anchor="middle">Home Assistant 生态</text>
+    <text x="810" y="283" text-anchor="middle">米家 / HA 生态</text>
   </g>
 
   <!-- ============ AI 决策层 ============ -->
@@ -99,32 +99,28 @@ SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewB
 
   <!-- ============ 控制中枢层 ============ -->
   <rect x="60" y="480" width="1080" height="150" rx="14" fill="url(#gw)" opacity="0.92" filter="url(#shadow)"/>
-  <text x="90" y="512" font-size="18" font-weight="bold" fill="#fff" font-family="Microsoft YaHei">控制中枢（小智终端 ESP32-S3）</text>
+  <text x="90" y="512" font-size="18" font-weight="bold" fill="#fff" font-family="Microsoft YaHei">控制中枢（小智终端 ESP32-S3，WiFi+BLE 双通道，参考米家模式）</text>
   <g font-family="Microsoft YaHei" font-size="14" fill="#fff">
     <rect x="90" y="525" width="190" height="84" rx="8" fill="#ffffff22"/>
     <text x="185" y="552" text-anchor="middle">MCP 工具集</text>
     <text x="185" y="572" text-anchor="middle" font-size="12">开关灯/调空调/拉窗帘/查询</text>
-    <text x="185" y="592" text-anchor="middle" font-size="12">6 个工具 schema</text>
-    <rect x="300" y="525" width="160" height="84" rx="8" fill="#ffffff22"/>
-    <text x="380" y="552" text-anchor="middle">红外发射</text>
-    <text x="380" y="572" text-anchor="middle" font-size="12">38kHz NEC/RAW</text>
-    <text x="380" y="592" text-anchor="middle" font-size="12">空调/电视/风扇</text>
-    <rect x="480" y="525" width="160" height="84" rx="8" fill="#ffffff22"/>
-    <text x="560" y="552" text-anchor="middle">433MHz 射频</text>
-    <text x="560" y="572" text-anchor="middle" font-size="12">无线插座/灯</text>
-    <text x="560" y="592" text-anchor="middle" font-size="12">FS1000A</text>
-    <rect x="660" y="525" width="160" height="84" rx="8" fill="#ffffff22"/>
-    <text x="740" y="552" text-anchor="middle">MQTT 桥</text>
-    <text x="740" y="572" text-anchor="middle" font-size="12">智能生态接入</text>
-    <text x="740" y="592" text-anchor="middle" font-size="12">状态订阅回读</text>
-    <rect x="840" y="525" width="160" height="84" rx="8" fill="#ffffff22"/>
-    <text x="920" y="552" text-anchor="middle">ESP-NOW 组网</text>
-    <text x="920" y="572" text-anchor="middle" font-size="12">自制节点控制</text>
-    <text x="920" y="592" text-anchor="middle" font-size="12">无路由器直连</text>
-    <rect x="1020" y="525" width="100" height="84" rx="8" fill="#ffffff22"/>
-    <text x="1070" y="552" text-anchor="middle">离线降级</text>
-    <text x="1070" y="572" text-anchor="middle" font-size="12">断网命令词</text>
-    <text x="1070" y="592" text-anchor="middle" font-size="12">本地兜底</text>
+    <text x="185" y="592" text-anchor="middle" font-size="12">4 个工具 schema</text>
+    <rect x="300" y="525" width="230" height="84" rx="8" fill="#ffffff22"/>
+    <text x="415" y="552" text-anchor="middle">WiFi 联网通道（主）</text>
+    <text x="415" y="572" text-anchor="middle" font-size="12">MQTT/HTTP</text>
+    <text x="415" y="592" text-anchor="middle" font-size="12">米家/HA 生态 · 自建设备</text>
+    <rect x="550" y="525" width="230" height="84" rx="8" fill="#ffffff22"/>
+    <text x="665" y="552" text-anchor="middle">蓝牙 BLE 通道（本地）</text>
+    <text x="665" y="572" text-anchor="middle" font-size="12">BLE Central</text>
+    <text x="665" y="592" text-anchor="middle" font-size="12">XZ-* 节点 · 低功耗直连</text>
+    <rect x="800" y="525" width="160" height="84" rx="8" fill="#ffffff22"/>
+    <text x="880" y="552" text-anchor="middle">网关服务</text>
+    <text x="880" y="572" text-anchor="middle" font-size="12">场景引擎</text>
+    <text x="880" y="592" text-anchor="middle" font-size="12">设备管理</text>
+    <rect x="980" y="525" width="140" height="84" rx="8" fill="#ffffff22"/>
+    <text x="1050" y="552" text-anchor="middle">离线降级</text>
+    <text x="1050" y="572" text-anchor="middle" font-size="12">断网命令词</text>
+    <text x="1050" y="592" text-anchor="middle" font-size="12">BLE 本地兜底</text>
   </g>
 
   <!-- ============ 执行层 ============ -->
@@ -133,7 +129,7 @@ SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewB
   <g font-family="Microsoft YaHei" font-size="14" fill="#fff">
     <rect x="90" y="695" width="170" height="120" rx="8" fill="#ffffff22"/>
     <text x="175" y="722" text-anchor="middle">智能灯节点</text>
-    <text x="175" y="742" text-anchor="middle" font-size="12">ESP32-C3</text>
+    <text x="175" y="742" text-anchor="middle" font-size="12">ESP32-C3 (BLE)</text>
     <text x="175" y="762" text-anchor="middle" font-size="12">PWM 调光 0-100%</text>
     <text x="175" y="782" text-anchor="middle" font-size="12">RGB 灯带</text>
     <rect x="280" y="695" width="170" height="120" rx="8" fill="#ffffff22"/>
@@ -157,9 +153,9 @@ SVG = '''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewB
     <text x="935" y="762" text-anchor="middle" font-size="12">手势控制</text>
     <text x="935" y="782" text-anchor="middle" font-size="12">安防布防</text>
     <rect x="1040" y="695" width="80" height="120" rx="8" fill="#ffffff22"/>
-    <text x="1080" y="750" text-anchor="middle" font-size="12">红外</text>
-    <text x="1080" y="770" text-anchor="middle" font-size="12">空调</text>
-    <text x="1080" y="790" text-anchor="middle" font-size="12">电视</text>
+    <text x="1080" y="750" text-anchor="middle" font-size="12">米家/HA</text>
+    <text x="1080" y="770" text-anchor="middle" font-size="12">生态设备</text>
+    <text x="1080" y="790" text-anchor="middle" font-size="12">WiFi/BLE</text>
   </g>
 
   <!-- 层间连接箭头 -->
