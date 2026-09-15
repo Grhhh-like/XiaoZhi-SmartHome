@@ -10,16 +10,20 @@
 
 static const char *TAG = "offline_cmd";
 
-/* 默认离线命令词表 */
+/* 默认离线命令词表（具体词条在前，避免子串误匹配） */
 static const offline_cmd_entry_t s_default_table[] = {
-    {"打开客厅灯", "living_room_light", "on",  0},
-    {"关闭客厅灯", "living_room_light", "off", 0},
-    {"打开卧室灯", "bedroom_light",     "on",  0},
-    {"关闭卧室灯", "bedroom_light",     "off", 0},
-    {"全屋开灯",   "all",               "on",  0},
-    {"全屋关灯",   "all",               "off", 0},
-    {"打开插座",   "living_room_plug",  "on",  0},
-    {"关闭插座",   "living_room_plug",  "off", 0},
+    {"打开卧室灯",   "bedroom_light",    "on",  0},
+    {"关闭卧室灯",   "bedroom_light",    "off", 0},
+    {"打开客厅灯",   "living_room_light", "on",  0},
+    {"关闭客厅灯",   "living_room_light", "off", 0},
+    {"打开厨房灯",   "kitchen_light",    "on",  0},
+    {"关闭厨房灯",   "kitchen_light",    "off", 0},
+    {"打开卧室插座", "bedroom_plug",     "on",  0},
+    {"关闭卧室插座", "bedroom_plug",     "off", 0},
+    {"打开客厅插座", "living_room_plug", "on",  0},
+    {"关闭客厅插座", "living_room_plug", "off", 0},
+    {"全屋开灯",     "all",              "on",  0},
+    {"全屋关灯",     "all",              "off", 0},
 };
 
 #define TABLE_COUNT (sizeof(s_default_table) / sizeof(s_default_table[0]))
@@ -46,7 +50,7 @@ static void exec_entry(const offline_cmd_entry_t *e)
     } else {
         ble_light_ctrl(e->device, e->cmd, e->value);
     }
-    ESP_LOGI(TAG, "offline exec: %s %s %s", e->device, e->cmd, e->cmd);
+    ESP_LOGI(TAG, "offline exec: %s %s value=%d", e->device, e->cmd, e->value);
 }
 
 bool offline_cmd_process(const char *text)
