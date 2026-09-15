@@ -22,7 +22,7 @@ typedef struct {
     uint32_t ts;  /* 时间戳 ms */
 } env_state_t;
 
-/* 更新环境状态（由 ESP-NOW/MQTT 数据回调调用） */
+/* 更新环境状态（由 BLE/MQTT 数据回调调用） */
 void sensor_fusion_update(const env_state_t *state);
 
 /* 读取当前融合环境状态 */
