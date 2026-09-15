@@ -1,7 +1,7 @@
 # 小智终端二次开发固件
 
 > 基于 [xiaozhi-esp32](https://github.com/78/xiaozhi-esp32) 的二次开发模块，新增：
-> **MCP 智能家居工具集 + 四通道控制（红外/433/MQTT/ESP-NOW）+ 传感器融合 + 主动智能引擎 + 离线降级**
+> **MCP 智能家居工具集 + WiFi联网(BLE 双通道控制（参考米家模式）+ 传感器融合 + 主动智能引擎 + 离线降级**
 
 ## 集成方式
 
@@ -13,7 +13,7 @@ cd xiaozhi-esp32
 # 将本仓库 main/ 下文件复制进工程 main/ 目录（新增模块，不覆盖官方文件）
 # 在官方 CMakeLists.txt 的 SRCS 中追加本模块源文件
 idf.py set-target esp32s3
-idf.py menuconfig   # 按官方文档配置外设(麦/喇叭/屏)与服务器
+idf.py menuconfig   # 按官方文档配置外设(麦/喇叭/屏)与服务器；启用蓝牙(BLE)支持
 idf.py build flash monitor
 ```
 
@@ -22,42 +22,45 @@ idf.py build flash monitor
 | 文件 | 功能 |
 |---|---|
 | `main.c` | 入口：初始化各模块、注册 MCP 工具 |
-| `mcp_tools.c/h` | MCP 工具集：smart_home_control / ir_send / rf_send / query_sensor / nas_query / scene_execute |
-| `ir_remote.c/h` | 红外发射（NEC 码 + RAW 码，38kHz） |
-| `rf433.c/h` | 433MHz 射频发射（FS1000A） |
-| `mqtt_bridge.c/h` | MQTT 桥（订阅/发布设备状态） |
-| `espnow_mesh.c/h` | ESP-NOW 主节点（节点发现/指令下发/状态回读） |
+| `mcp_tools.c/h` | MCP 工具集：smart_home_control / query_sensor / nas_query / scene_execute（WiFi+BLE 双通道路由） |
+| `ble_gateway.c/h` | BLE 网关（Central）：扫描 XZ-* 节点、GATT 连接、控制/状态回读 |
+| `mqtt_bridge.c/h` | WiFi 联网 MQTT 桥（米家/Home Assistant 生态、自建设备） |
 | `sensor_fusion.c/h` | 多传感器融合（环境决策） |
 | `proactive.c/h` | 主动智能引擎（规则+习惯学习+主动播报） |
-| `offline_cmd.c/h` | 离线命令词引擎（断网降级） |
+| `offline_cmd.c/h` | 离线命令词引擎（断网时 BLE 本地降级控制） |
 | `lcd_ui.c/h` | 圆屏表情 UI（听/想/说/执行状态） |
+
+## 控制通道（参考米家智能家居模式）
+
+| 通道 | 覆盖设备 | 说明 |
+|---|---|---|
+| WiFi 联网（MQTT/HTTP） | 米家生态 / Home Assistant / 自建 MQTT 设备 | 主通道，云端与局域网统一管理 |
+| 蓝牙 BLE | 自制智能节点（灯/窗帘/插座/传感器） | 本地直连，低功耗，无需路由器 |
+| 离线命令词 + BLE | 断网时核心设备 | 本地兜底 |
 
 ## 引脚定义（默认）
 
 | 功能 | GPIO |
 |---|---|
-| 红外发射 | GPIO17 |
-| 433 发射 | GPIO18 |
 | WS2812 灯带 | GPIO48 |
 | I2S 麦克风 | 官方默认 |
 | I2S 喇叭 | 官方默认 |
 | 圆屏 SPI | 官方默认 |
 
-> 按实际开发板修改 `main.c` 顶部 `PIN_*` 宏。
+> 按实际开发板修改。
 
 ## 配置
 
-`main.c` 顶部配置：
+`mqtt_bridge.c` 顶部配置：
 
 ```c
 #define MQTT_BROKER_URI   "mqtt://192.168.1.10:1883"
 #define MQTT_USER         "smart_home"
 #define MQTT_PASS         "change_me"
-#define MASTER_MAC        {0xXX, 0xXX, 0xXX, 0xXX, 0xXX, 0xXX}  // 节点目标MAC(广播可省略)
 ```
 
 ## 协议说明
 
-- ESP-NOW 帧格式见 `espnow_mesh.h`
+- BLE GATT 协议（UUID/帧格式）见 `ble_gateway.h` 与 `firmware/node/ble_node/`
 - MQTT 消息格式见 `mqtt_bridge.h`
 - 离线命令词表见 `offline_cmd.h`
