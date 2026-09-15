@@ -9,7 +9,7 @@
 #include "esp_log.h"
 #include "driver/gpio.h"
 #include "driver/uart.h"
-#include "espnow_node.h"
+#include "ble_node.h"
 
 static const char *TAG = "plug_node";
 
@@ -26,9 +26,9 @@ static void relay_set(bool on)
     s_relay_on = on;
     gpio_set_level(PIN_RELAY_CT, on ? 1 : 0);
     ESP_LOGI(TAG, "relay -> %s", on ? "ON" : "OFF");
-    /* 状态回传 */
+    /* 状态回传（BLE Notify） */
     uint8_t st = on ? 1 : 0;
-    espnow_node_report_status(&st, 1);
+    ble_node_report_status(&st, 1);
 }
 
 static void hlw8032_init(void)
@@ -47,18 +47,16 @@ static void hlw8032_init(void)
     ESP_LOGI(TAG, "HLW8032 meter init");
 }
 
-static void on_ctrl(uint8_t cmd, const uint8_t *data, int len)
+static void on_ctrl(const char *cmd, int32_t value)
 {
-    (void)data; (void)len;
-    switch (cmd) {
-    case CMD_ON:
+    (void)value;
+    if (!cmd) {
+        return;
+    }
+    if (strcmp(cmd, "on") == 0) {
         relay_set(true);
-        break;
-    case CMD_OFF:
+    } else if (strcmp(cmd, "off") == 0) {
         relay_set(false);
-        break;
-    default:
-        break;
     }
 }
 
@@ -71,7 +69,7 @@ void app_main(void)
     gpio_config(&io);
 
     hlw8032_init();
-    espnow_node_init(NODE_PLUG, NODE_ID, NULL, on_ctrl);
+    ble_node_init(NODE_PLUG, NODE_ID, on_ctrl);
     relay_set(false);
     ESP_LOGI(TAG, "plug node ready, id=%08X", NODE_ID);
 }
