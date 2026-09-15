@@ -4,8 +4,9 @@ gateway.py - 小智·智家 控制中枢网关
 小智·智家 XiaoZhi SmartHome
 
 功能：
-- MQTT 桥接（EMQX/Mosquitto）
+- MQTT 桥接（EMQX/Mosquitto）—— WiFi 联网通道（参考米家模式）
 - 场景引擎（YAML 配置）
+- 设备管理（米家 / Home Assistant 生态接入配置）
 - 设备状态聚合
 - REST API（Flask）
 """
@@ -105,18 +106,16 @@ def create_app(mqtt: MqttBridge):
     def api_scene(name):
         return jsonify(execute_scene(mqtt, name))
 
-    @app.get("/api/ir/codes")
-    def api_ir_codes():
-        # 红外码库由 ir_codes/ 目录加载
-        return jsonify({"codes": ir_code_list()})
+    @app.get("/api/devices")
+    def api_devices():
+        # 设备管理：米家 / Home Assistant 生态接入的设备清单
+        return jsonify({"devices": list(device_states.keys())})
+
+    @app.get("/api/scenes")
+    def api_scenes():
+        return jsonify({"scenes": list(scenes.keys())})
 
     return app
-
-def ir_code_list():
-    import os, glob
-    base = os.path.join(os.path.dirname(__file__), "ir_codes")
-    files = [os.path.basename(f) for f in glob.glob(os.path.join(base, "*.json"))]
-    return files
 
 def load_scenes(path):
     with open(path, "r", encoding="utf-8") as f:
