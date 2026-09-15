@@ -117,10 +117,36 @@ int proactive_execute_scene(const char *scene)
                 snprintf(args.cmd, sizeof(args.cmd), "set_brightness");
                 args.value = 80;
                 mcp_smart_home_control(&args);
+                snprintf(args.device, sizeof(args.device), "living_room_curtain");
+                snprintf(args.cmd, sizeof(args.cmd), "open");
+                mcp_smart_home_control(&args);
             } else if (strcmp(scene, "away") == 0) {
                 snprintf(args.device, sizeof(args.device), "living_room_light");
                 snprintf(args.cmd, sizeof(args.cmd), "off");
                 mcp_smart_home_control(&args);
+                snprintf(args.device, sizeof(args.device), "bedroom_light");
+                snprintf(args.cmd, sizeof(args.cmd), "off");
+                mcp_smart_home_control(&args);
+                snprintf(args.device, sizeof(args.device), "living_room_curtain");
+                snprintf(args.cmd, sizeof(args.cmd), "close");
+                mcp_smart_home_control(&args);
+                snprintf(args.device, sizeof(args.device), "bedroom_ac");
+                snprintf(args.cmd, sizeof(args.cmd), "off");
+                mcp_smart_home_control(&args);
+                snprintf(args.device, sizeof(args.device), "living_room_plug");
+                snprintf(args.cmd, sizeof(args.cmd), "off");
+                mcp_smart_home_control(&args);
+            } else if (strcmp(scene, "movie") == 0) {
+                snprintf(args.device, sizeof(args.device), "living_room_light");
+                snprintf(args.cmd, sizeof(args.cmd), "set_brightness");
+                args.value = 15;
+                mcp_smart_home_control(&args);
+                snprintf(args.device, sizeof(args.device), "living_room_curtain");
+                snprintf(args.cmd, sizeof(args.cmd), "close");
+                mcp_smart_home_control(&args);
+            } else {
+                ESP_LOGW(TAG, "scene %s 未注册执行动作", scene);
+                return -1;
             }
             ESP_LOGI(TAG, "scene %s executed", scene);
             return 0;
