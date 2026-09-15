@@ -56,6 +56,7 @@ static ble_node_t *node_alloc(const char *device)
             ble_node_t *n = &s_nodes[i];
             memset(n, 0, sizeof(*n));
             snprintf(n->device, sizeof(n->device), "%s", device);
+            n->conn_handle = 0xFFFF; /* BLE_HS_CONN_HANDLE_NONE：未连接 */
             n->in_use = true;
             return n;
         }
