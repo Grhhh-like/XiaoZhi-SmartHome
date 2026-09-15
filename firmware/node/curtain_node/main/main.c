@@ -55,15 +55,18 @@ static void move_to(uint8_t target)
     int delta = (int)target - (int)s_position;
     int dir = delta > 0 ? 1 : -1;
     int steps = (delta < 0 ? -delta : delta) * 2;
+    bool hit_limit = false;
 
     for (int i = 0; i < steps && s_running; i++) {
-        /* 限位检测 */
+        /* 限位检测（提前结束，不覆盖实测位置） */
         if (dir > 0 && gpio_get_level(PIN_LIMIT_OPEN) == 1) {
             s_position = 100;
+            hit_limit = true;
             break;
         }
         if (dir < 0 && gpio_get_level(PIN_LIMIT_CLOSE) == 1) {
             s_position = 0;
+            hit_limit = true;
             break;
         }
         static int seq_idx = 0;
@@ -72,9 +75,11 @@ static void move_to(uint8_t target)
         vTaskDelay(pdMS_TO_TICKS(3));
     }
     motor_off();
-    s_position = target;
+    if (!hit_limit && s_running) {
+        s_position = target;
+    }
     s_running = false;
-    ESP_LOGI(TAG, "curtain position -> %d%%", s_position);
+    ESP_LOGI(TAG, "curtain position -> %d%%%s", s_position, hit_limit ? " (限位)" : "");
 }
 
 static void on_ctrl(const char *cmd, int32_t value)
@@ -90,7 +95,10 @@ static void on_ctrl(const char *cmd, int32_t value)
         s_running = false;
         motor_off();
     } else if (strcmp(cmd, "set_position") == 0) {
-        move_to(value > 100 ? 100 : (uint8_t)value);
+        /* 钳制非法值（含负数转 uint8_t 的场景） */
+        if (value < 0) value = 0;
+        if (value > 100) value = 100;
+        move_to((uint8_t)value);
     }
 }
 
