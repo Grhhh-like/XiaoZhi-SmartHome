@@ -55,6 +55,7 @@ def main():
     d.rounded_rectangle((360, 260, 640, 460), radius=8, outline=COLOR_COMP, width=3)
     d.text((500-70, 340), "ESP32-S3", fill=(255,255,255), font=font)
     d.text((500-90, 372), "主控模组", fill=(200,200,200), font=font_s)
+    d.text((500-110, 402), "WiFi + BLE 双模", fill=(160,200,160), font=font_s)
 
     # 麦克风 x2
     for dx in (150, 300):
@@ -69,11 +70,10 @@ def main():
     d.ellipse((120, 120, 320, 320), outline=COLOR_COMP, width=3)
     d.text((190, 205), "圆屏", fill=(200,200,200), font=font_s)
 
-    # 红外 + 433
-    d.rounded_rectangle((120, 560, 240, 620), radius=5, outline=COLOR_COMP, width=2)
-    d.text((135, 575), "红外", fill=(200,200,200), font=font_s)
-    d.rounded_rectangle((260, 560, 380, 620), radius=5, outline=COLOR_COMP, width=2)
-    d.text((275, 575), "433MHz", fill=(200,200,200), font=font_s)
+    # WiFi 天线区 + BLE 说明
+    d.rounded_rectangle((120, 560, 300, 620), radius=5, outline=COLOR_COMP, width=2)
+    d.text((135, 575), "WiFi/BLE 天线", fill=(200,200,200), font=font_s)
+    d.text((135, 596), "2.4G", fill=(160,200,160), font=load_font(13))
 
     # 灯带接口
     d.rounded_rectangle((700, 500, 850, 560), radius=5, outline=COLOR_COMP, width=2)
