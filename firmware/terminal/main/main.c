@@ -14,20 +14,14 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "mcp_tools.h"
-#include "ir_remote.h"
-#include "rf433.h"
+#include "ble_gateway.h"
 #include "mqtt_bridge.h"
-#include "espnow_mesh.h"
 #include "sensor_fusion.h"
 #include "proactive.h"
 #include "offline_cmd.h"
 #include "lcd_ui.h"
 
 static const char *TAG = "xiaozhi_smarthome";
-
-/* ---------- 引脚配置（按实际开发板修改） ---------- */
-#define PIN_IR_GPIO   17
-#define PIN_RF_GPIO   18
 
 /* 周期任务句柄 */
 static TaskHandle_t s_house_task = NULL;
@@ -48,13 +42,11 @@ void xiaozhi_smarthome_init(void)
     ESP_LOGI(TAG, "=== XiaoZhi SmartHome module init ===");
 
     /* 外设 */
-    ir_remote_init();
-    rf433_init();
     lcd_ui_init();
 
-    /* 通信 */
+    /* 通信：WiFi 联网(MQTT) + 蓝牙 BLE 双通道（参考米家模式） */
     mqtt_bridge_init();
-    espnow_mesh_init();
+    ble_gateway_init();
 
     /* 智能层 */
     sensor_fusion_init_placeholder();
