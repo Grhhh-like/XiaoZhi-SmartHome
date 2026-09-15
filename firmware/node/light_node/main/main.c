@@ -4,12 +4,13 @@
  * ESP32-C3 + MOSFET 调光 + WS2812 灯带
  */
 #include <string.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
 #include "driver/ledc.h"
-#include "espnow_node.h"
+#include "ble_node.h"
 
 static const char *TAG = "light_node";
 
@@ -30,23 +31,18 @@ static void set_brightness(uint8_t v)
     ESP_LOGI(TAG, "brightness -> %d%%", s_brightness);
 }
 
-/* 节点控制回调 */
-static void on_ctrl(uint8_t cmd, const uint8_t *data, int len)
+/* 节点控制回调（BLE 控制帧 → 命令字符串 + 数值） */
+static void on_ctrl(const char *cmd, int32_t value)
 {
-    switch (cmd) {
-    case CMD_ON:
+    if (!cmd) {
+        return;
+    }
+    if (strcmp(cmd, "on") == 0) {
         set_brightness(100);
-        break;
-    case CMD_OFF:
+    } else if (strcmp(cmd, "off") == 0) {
         set_brightness(0);
-        break;
-    case CMD_SET_VALUE:
-        if (len >= 1) {
-            set_brightness(data[0]);
-        }
-        break;
-    default:
-        break;
+    } else if (strcmp(cmd, "set_brightness") == 0) {
+        set_brightness((uint8_t)value);
     }
 }
 
@@ -73,8 +69,8 @@ void app_main(void)
     };
     ledc_channel_config(&ch);
 
-    /* ESP-NOW 从机 */
-    espnow_node_init(NODE_LIGHT, NODE_ID, NULL, on_ctrl);
+    /* BLE 从机（GATT Server） */
+    ble_node_init(NODE_LIGHT, NODE_ID, on_ctrl);
 
     ESP_LOGI(TAG, "light node ready, id=%08X", NODE_ID);
 
