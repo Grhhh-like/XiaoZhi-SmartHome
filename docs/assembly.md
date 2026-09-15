@@ -6,7 +6,7 @@
 
 ## 1. 硬件准备
 
-### 1.1 终端主控板（小智终端）
+### 1.1 终端主控板（移动机器人）
 
 | 组件 | 型号/规格 | 数量 | 备注 |
 |---|---|---|---|
@@ -15,7 +15,13 @@
 | 喇叭 | 3W 8Ω + MAX98357A | 1 | I2S 功放 |
 | 屏幕 | 1.28" GC9A01 圆屏 | 1 | 表情 UI |
 | 灯带 | WS2812 ×8 | 1 | 呼吸灯反馈 |
-| 电源 | 5V 2A 适配器 + 稳压 | 1 | |
+| 电机 | N20 减速电机 + 编码器 | 2 | 差速驱动 |
+| 电机驱动 | TB6612FNG | 1 | 双路电机驱动 |
+| 万向轮 | 1.5" 万向轮 | 1 | 支撑 |
+| 电池 | 18650 ×3 (11.1V) + 保护板 | 1 | 供电 |
+| 避障 | HC-SR04 超声波 | 1 | 防撞 |
+| IMU | MPU6050 | 1 | 姿态/航向 |
+| 电源 | 5V/12V 稳压 | 2 | 主控+电机分离供电 |
 
 ### 1.2 智能节点（BLE 从机）
 
@@ -39,11 +45,11 @@ cd xiaozhi-esp32
 # 将本仓库 firmware/terminal 下的 main/ 合并到工程 main/ 目录
 # 配置 WiFi / 服务器地址（小智官方免费服务器：websocket://xyz.xiaozhi.me/ws）
 idf.py set-target esp32s3
-idf.py menuconfig        # 配置麦克风/喇叭/屏幕外设
+idf.py menuconfig        # 配置麦克风/喇叭/屏幕外设；启用蓝牙与电机PWM
 idf.py build flash monitor
 ```
 
-> 详细配置参考 xiaozhi-esp32 官方文档。本仓库提供的是 **MCP 工具集 + WiFi/BLE 双通道控制 + 主动引擎** 的二次开发模块。
+> 详细配置参考 xiaozhi-esp32 官方文档。本仓库提供的是 **MCP 工具集 + 运动控制 + WiFi/BLE 双通道 + 主动引擎** 的二次开发模块。
 
 ### 2.2 MCP 工具注册
 
@@ -52,6 +58,7 @@ idf.py build flash monitor
 | 工具名 | 参数 | 说明 |
 |---|---|---|
 | `smart_home_control` | device, cmd, value | 通用控制（WiFi联网/BLE 双通道路由）：灯/插座/窗帘/空调 |
+| `robot_move` | action, speed, distance | 移动底盘：前进/后退/左转/右转/停止/召唤/巡航/跟随 |
 | `query_sensor` | node_id, type | 查询 BLE 传感器节点 |
 | `nas_query` | scope, query | NAS 知识中枢查询 |
 | `scene_execute` | scene | 场景联动 |
@@ -101,6 +108,9 @@ python rag_server.py --index ./index --docs ./家庭文档
 ## 7. 验证清单
 
 - [ ] 小智唤醒 + 对话正常
+- [ ] "小智过来" → 差速底盘移动到你身边
+- [ ] "去卧室关灯" → 移动 + BLE 关灯
+- [ ] 定时巡检 → 全屋巡航采集环境
 - [ ] "打开客厅灯" → BLE 灯节点点亮
 - [ ] "空调 26 度" → WiFi 联网控制空调（米家/HA）
 - [ ] MQTT 桥接 Home Assistant / 米家生态设备
