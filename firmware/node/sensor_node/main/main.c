@@ -43,11 +43,18 @@ static float read_temperature_humidity(float *humi)
 {
     /* SHT40: 发送测量命令 0xFD, 读 6 字节 */
     uint8_t cmd = 0xFD;
-    i2c_master_write_to_device(I2C_PORT, SHT40_ADDR, &cmd, 1, 100 / portTICK_PERIOD_MS);
+    *humi = 50.0f;
+    if (i2c_master_write_to_device(I2C_PORT, SHT40_ADDR, &cmd, 1, 100 / portTICK_PERIOD_MS) != ESP_OK) {
+        ESP_LOGW(TAG, "SHT40 write fail");
+        return 25.0f; /* 读失败返回默认室温，避免垃圾数据 */
+    }
     vTaskDelay(pdMS_TO_TICKS(20));
 
-    uint8_t buf[6];
-    i2c_master_read_from_device(I2C_PORT, SHT40_ADDR, buf, 6, 100 / portTICK_PERIOD_MS);
+    uint8_t buf[6] = {0};
+    if (i2c_master_read_from_device(I2C_PORT, SHT40_ADDR, buf, 6, 100 / portTICK_PERIOD_MS) != ESP_OK) {
+        ESP_LOGW(TAG, "SHT40 read fail");
+        return 25.0f;
+    }
 
     /* 温湿度计算公式: -45 + 175 * (raw / 65535) */
     uint16_t raw_t = (buf[0] << 8) | buf[1];
@@ -62,11 +69,17 @@ static float read_light(void)
 {
     /* BH1750: 连续高分辨率模式 0x10 */
     uint8_t cmd = 0x10;
-    i2c_master_write_to_device(I2C_PORT, BH1750_ADDR, &cmd, 1, 100 / portTICK_PERIOD_MS);
+    if (i2c_master_write_to_device(I2C_PORT, BH1750_ADDR, &cmd, 1, 100 / portTICK_PERIOD_MS) != ESP_OK) {
+        ESP_LOGW(TAG, "BH1750 write fail");
+        return 300.0f;
+    }
     vTaskDelay(pdMS_TO_TICKS(180));
 
-    uint8_t buf[2];
-    i2c_master_read_from_device(I2C_PORT, BH1750_ADDR, buf, 2, 100 / portTICK_PERIOD_MS);
+    uint8_t buf[2] = {0};
+    if (i2c_master_read_from_device(I2C_PORT, BH1750_ADDR, buf, 2, 100 / portTICK_PERIOD_MS) != ESP_OK) {
+        ESP_LOGW(TAG, "BH1750 read fail");
+        return 300.0f;
+    }
     uint16_t raw = (buf[0] << 8) | buf[1];
     return raw / 1.2f; /* 分辨率 1.2 lux/bit */
 }
@@ -75,10 +88,16 @@ static float read_air(void)
 {
     /* SGP40: VOC 指数（演示简化，实际需校准算法） */
     uint8_t cmd[2] = {0x26, 0x0F};
-    i2c_master_write_to_device(I2C_PORT, SGP40_ADDR, cmd, 2, 100 / portTICK_PERIOD_MS);
+    if (i2c_master_write_to_device(I2C_PORT, SGP40_ADDR, cmd, 2, 100 / portTICK_PERIOD_MS) != ESP_OK) {
+        ESP_LOGW(TAG, "SGP40 write fail");
+        return 400.0f;
+    }
     vTaskDelay(pdMS_TO_TICKS(10));
-    uint8_t buf[2];
-    i2c_master_read_from_device(I2C_PORT, SGP40_ADDR, buf, 2, 100 / portTICK_PERIOD_MS);
+    uint8_t buf[2] = {0};
+    if (i2c_master_read_from_device(I2C_PORT, SGP40_ADDR, buf, 2, 100 / portTICK_PERIOD_MS) != ESP_OK) {
+        ESP_LOGW(TAG, "SGP40 read fail");
+        return 400.0f;
+    }
     uint16_t raw = (buf[0] << 8) | buf[1];
     /* 原始值映射到 CO2 当量(ppm) 简化 */
     return 400.0f + (raw / 65535.0f) * 2000.0f;
