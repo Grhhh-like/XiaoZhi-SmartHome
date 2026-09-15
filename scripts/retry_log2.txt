@@ -1,0 +1,20 @@
+﻿[OK] LICENSE
+[OK] README.md
+[OK] app/README.md
+[OK] docs/design.md
+[OK] docs/scenarios.md
+[OK] docs/thesis_outline.md
+[OK] firmware/node/README.md
+[OK] firmware/terminal/main/lcd_ui.h
+[OK] firmware/terminal/main/main.c
+[OK] gateway/gateway.py
+[OK] gateway/requirements.txt
+[OK] gateway/scenes.yaml
+[OK] hardware/README.md
+[OK] hardware/terminal_LCEDA.json
+[OK] nas_bridge/README.md
+[OK] nas_bridge/bridge.py
+[OK] scripts/gen_arch_svg.py
+[OK] scripts/gen_lceda_json.py
+
+Done. success=18, fail=0
