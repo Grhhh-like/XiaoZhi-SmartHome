@@ -26,6 +26,7 @@ typedef struct {
 /* ---------- 工具枚举 ---------- */
 typedef enum {
     MCP_TOOL_SMART_HOME_CONTROL = 0, /* 通用设备控制(WiFi/BLE双通道): device, cmd, value */
+    MCP_TOOL_ROBOT_MOVE,             /* 移动底盘: action, speed, distance */
     MCP_TOOL_QUERY_SENSOR,           /* 查询BLE传感器节点: node_id, type */
     MCP_TOOL_NAS_QUERY,              /* NAS知识中枢: scope, query */
     MCP_TOOL_SCENE_EXECUTE,          /* 场景联动: scene */
@@ -39,6 +40,12 @@ typedef struct {
     int32_t value;     /* 参数值: 亮度0-100 / 温度16-30 / 百分比 ... */
     char room[32];     /* 房间: living_room / bedroom / kitchen ... */
 } mcp_smart_home_args_t;
+
+typedef struct {
+    char action[16];   /* 移动动作: forward/backward/left/right/stop/come/patrol/follow */
+    int32_t speed;     /* 速度 cm/s（0-30） */
+    int32_t distance;  /* 距离 cm（移动类动作） */
+} mcp_robot_args_t;
 
 typedef struct {
     char node_id[16];  /* 传感器节点ID: sensor_living */
@@ -61,6 +68,7 @@ void mcp_tools_register_all(void);
 
 /* 各工具实现（可被 MCP 调度器直接调用） */
 mcp_result_t mcp_smart_home_control(const mcp_smart_home_args_t *args);
+mcp_result_t mcp_robot_move(const mcp_robot_args_t *args);
 mcp_result_t mcp_query_sensor(const mcp_sensor_args_t *args);
 mcp_result_t mcp_nas_query(const mcp_nas_args_t *args);
 mcp_result_t mcp_scene_execute(const mcp_scene_args_t *args);
