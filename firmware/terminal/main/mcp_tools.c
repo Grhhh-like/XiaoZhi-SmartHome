@@ -14,6 +14,7 @@
 #include "mcp_tools.h"
 #include "ble_gateway.h"
 #include "mqtt_bridge.h"
+#include "motion.h"
 #include "sensor_fusion.h"
 #include "proactive.h"
 
@@ -28,6 +29,11 @@ static const char *TOOLS_SCHEMA =
     "            \"cmd\":\"命令,如on/off/set_brightness/set_temp\","
     "            \"value\":\"数值,亮度0-100/温度16-30\","
     "            \"room\":\"房间,如living_room\"}},"
+    "{\"name\":\"robot_move\","
+    " \"desc\":\"控制移动底盘(前进/后退/左转/右转/停止/召唤/巡航/跟随)\","
+    " \"params\":{\"action\":\"forward/backward/left/right/stop/come/patrol/follow\","
+    "            \"speed\":\"速度cm/s 0-30\","
+    "            \"distance\":\"距离cm\"}},"
     "{\"name\":\"query_sensor\","
     " \"desc\":\"查询BLE环境传感器节点数据\","
     " \"params\":{\"node_id\":\"如sensor_living\",\"type\":\"temp/humi/air/light\"}},"
@@ -88,6 +94,55 @@ mcp_result_t mcp_smart_home_control(const mcp_smart_home_args_t *args)
 
     /* 记录主动引擎交互日志（供习惯学习） */
     proactive_log_interaction(args->device, args->cmd, res.success);
+    return res;
+}
+
+/* ============ robot_move: 移动底盘控制 ============ */
+mcp_result_t mcp_robot_move(const mcp_robot_args_t *args)
+{
+    mcp_result_t res = {0};
+    if (!args || !args->action[0]) {
+        res.success = false;
+        snprintf(res.message, sizeof(res.message), "移动动作不能为空");
+        return res;
+    }
+
+    int16_t speed = (args->speed > 0 && args->speed <= 30) ? (int16_t)args->speed : 15;
+
+    if (strcmp(args->action, "forward") == 0) {
+        motion_move_cm(args->distance ? (int16_t)args->distance : 30, speed);
+        snprintf(res.message, sizeof(res.message), "机器人前进");
+    } else if (strcmp(args->action, "backward") == 0) {
+        motion_move_cm(args->distance ? -(int16_t)args->distance : -30, speed);
+        snprintf(res.message, sizeof(res.message), "机器人后退");
+    } else if (strcmp(args->action, "left") == 0) {
+        motion_set(MOTION_LEFT, speed);
+        snprintf(res.message, sizeof(res.message), "机器人左转");
+    } else if (strcmp(args->action, "right") == 0) {
+        motion_set(MOTION_RIGHT, speed);
+        snprintf(res.message, sizeof(res.message), "机器人右转");
+    } else if (strcmp(args->action, "come") == 0) {
+        /* 召唤：语音定位/声音源定向移动（配合麦克风阵列） */
+        motion_set(MOTION_FORWARD, speed);
+        snprintf(res.message, sizeof(res.message), "正在移动到您身边");
+    } else if (strcmp(args->action, "patrol") == 0) {
+        /* 巡检：全屋巡航（配合避障+地图） */
+        motion_set(MOTION_FORWARD, speed);
+        snprintf(res.message, sizeof(res.message), "开始全屋巡航巡检");
+    } else if (strcmp(args->action, "follow") == 0) {
+        motion_set(MOTION_FORWARD, speed);
+        snprintf(res.message, sizeof(res.message), "开始跟随模式");
+    } else if (strcmp(args->action, "stop") == 0) {
+        motion_stop();
+        snprintf(res.message, sizeof(res.message), "机器人已停止");
+    } else {
+        res.success = false;
+        snprintf(res.message, sizeof(res.message), "未知移动动作 %s", args->action);
+        return res;
+    }
+
+    res.success = true;
+    proactive_log_interaction("robot", args->action, true);
     return res;
 }
 
