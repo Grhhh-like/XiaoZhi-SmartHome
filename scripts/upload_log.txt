@@ -1,0 +1,62 @@
+﻿token acquired (gho_1IGc...)
+total files: 62
+[OK] .gitignore
+[FAIL] LICENSE: HTTP Error 409: Conflict
+[FAIL] README.md: HTTP Error 409: Conflict
+[FAIL] app/README.md: HTTP Error 409: Conflict
+[OK] app/dashboard.html
+[OK] assets/architecture.svg
+[OK] assets/pcb_preview.png
+[OK] docs/assembly.md
+[FAIL] docs/design.md: HTTP Error 409: Conflict
+[FAIL] docs/scenarios.md: HTTP Error 409: Conflict
+[FAIL] docs/thesis_outline.md: HTTP Error 409: Conflict
+[FAIL] firmware/node/README.md: HTTP Error 409: Conflict
+[OK] firmware/node/ble_node/README.md
+[OK] firmware/node/ble_node/ble_node.c
+[OK] firmware/node/ble_node/ble_node.h
+[OK] firmware/node/curtain_node/main/CMakeLists.txt
+[OK] firmware/node/curtain_node/main/main.c
+[OK] firmware/node/light_node/main/CMakeLists.txt
+[OK] firmware/node/light_node/main/main.c
+[OK] firmware/node/plug_node/main/CMakeLists.txt
+[OK] firmware/node/plug_node/main/main.c
+[OK] firmware/node/sensor_node/main/CMakeLists.txt
+[OK] firmware/node/sensor_node/main/main.c
+[OK] firmware/terminal/CMakeLists.txt
+[OK] firmware/terminal/README.md
+[OK] firmware/terminal/main/CMakeLists.txt
+[OK] firmware/terminal/main/ble_gateway.c
+[OK] firmware/terminal/main/ble_gateway.h
+[OK] firmware/terminal/main/lcd_ui.c
+[FAIL] firmware/terminal/main/lcd_ui.h: HTTP Error 409: Conflict
+[FAIL] firmware/terminal/main/main.c: HTTP Error 409: Conflict
+[OK] firmware/terminal/main/mcp_tools.c
+[OK] firmware/terminal/main/mcp_tools.h
+[OK] firmware/terminal/main/mqtt_bridge.c
+[OK] firmware/terminal/main/mqtt_bridge.h
+[OK] firmware/terminal/main/offline_cmd.c
+[OK] firmware/terminal/main/offline_cmd.h
+[OK] firmware/terminal/main/proactive.c
+[OK] firmware/terminal/main/proactive.h
+[OK] firmware/terminal/main/sensor_fusion.c
+[OK] firmware/terminal/main/sensor_fusion.h
+[OK] firmware/terminal/partitions.csv
+[OK] firmware/terminal/sdkconfig.defaults
+[OK] gateway/README.md
+[FAIL] gateway/gateway.py: HTTP Error 409: Conflict
+[FAIL] gateway/requirements.txt: HTTP Error 409: Conflict
+[FAIL] gateway/scenes.yaml: HTTP Error 409: Conflict
+[OK] hardware/BOM.csv
+[FAIL] hardware/README.md: HTTP Error 409: Conflict
+[OK] hardware/node_LCEDA.json
+[FAIL] hardware/terminal_LCEDA.json: HTTP Error 409: Conflict
+[FAIL] nas_bridge/README.md: HTTP Error 409: Conflict
+[FAIL] nas_bridge/bridge.py: HTTP Error 409: Conflict
+[OK] nas_bridge/calendar_sync.py
+[OK] nas_bridge/rag_server.py
+[OK] nas_bridge/requirements.txt
+[OK] scripts/delete_obsolete.py
+[FAIL] scripts/gen_arch_svg.py: HTTP Error 409: Conflict
+[FAIL] scripts/gen_lceda_json.py: HTTP Error 409: Conflict
+[OK] scripts/gen_pcb_preview.py
