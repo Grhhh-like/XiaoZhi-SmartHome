@@ -1,0 +1,23 @@
+# 小智终端 sdkconfig 默认配置（合并进 xiaozhi-esp32 工程）
+
+# ---- Flash / Partition ----
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# ---- WiFi ----
+CONFIG_ESP_WIFI_ENABLED=y
+CONFIG_ESP_WIFI_PHY_TX_POWER=20
+
+# ---- MQTT ----
+CONFIG_MQTT_PROTOCOL_311=y
+
+# ---- ESP-NOW ----
+CONFIG_ESP_WIFI_SOFTAP_SUPPORT=y
+
+# ---- 电源管理 ----
+CONFIG_PM_ENABLE=y
+CONFIG_PM_DFS_INTERVAL=1000
+
+# ---- 日志 ----
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
