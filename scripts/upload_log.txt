@@ -60,3 +60,25 @@ total files: 62
 [FAIL] scripts/gen_arch_svg.py: HTTP Error 409: Conflict
 [FAIL] scripts/gen_lceda_json.py: HTTP Error 409: Conflict
 [OK] scripts/gen_pcb_preview.py
+[OK] scripts/upload_log.txt
+[OK] scripts/upload_to_github.py
+
+Done. success=44, fail=18
+  FAILED: LICENSE -> HTTP Error 409: Conflict
+  FAILED: README.md -> HTTP Error 409: Conflict
+  FAILED: app/README.md -> HTTP Error 409: Conflict
+  FAILED: docs/design.md -> HTTP Error 409: Conflict
+  FAILED: docs/scenarios.md -> HTTP Error 409: Conflict
+  FAILED: docs/thesis_outline.md -> HTTP Error 409: Conflict
+  FAILED: firmware/node/README.md -> HTTP Error 409: Conflict
+  FAILED: firmware/terminal/main/lcd_ui.h -> HTTP Error 409: Conflict
+  FAILED: firmware/terminal/main/main.c -> HTTP Error 409: Conflict
+  FAILED: gateway/gateway.py -> HTTP Error 409: Conflict
+  FAILED: gateway/requirements.txt -> HTTP Error 409: Conflict
+  FAILED: gateway/scenes.yaml -> HTTP Error 409: Conflict
+  FAILED: hardware/README.md -> HTTP Error 409: Conflict
+  FAILED: hardware/terminal_LCEDA.json -> HTTP Error 409: Conflict
+  FAILED: nas_bridge/README.md -> HTTP Error 409: Conflict
+  FAILED: nas_bridge/bridge.py -> HTTP Error 409: Conflict
+  FAILED: scripts/gen_arch_svg.py -> HTTP Error 409: Conflict
+  FAILED: scripts/gen_lceda_json.py -> HTTP Error 409: Conflict
