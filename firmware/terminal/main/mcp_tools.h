@@ -25,10 +25,8 @@ typedef struct {
 
 /* ---------- 工具枚举 ---------- */
 typedef enum {
-    MCP_TOOL_SMART_HOME_CONTROL = 0, /* 通用设备控制: device, cmd, value */
-    MCP_TOOL_IR_SEND,                /* 红外: brand, device, cmd */
-    MCP_TOOL_RF_SEND,                /* 433: remote_id, cmd */
-    MCP_TOOL_QUERY_SENSOR,           /* 查询传感器: node_id, type */
+    MCP_TOOL_SMART_HOME_CONTROL = 0, /* 通用设备控制(WiFi/BLE双通道): device, cmd, value */
+    MCP_TOOL_QUERY_SENSOR,           /* 查询BLE传感器节点: node_id, type */
     MCP_TOOL_NAS_QUERY,              /* NAS知识中枢: scope, query */
     MCP_TOOL_SCENE_EXECUTE,          /* 场景联动: scene */
     MCP_TOOL_MAX
@@ -41,17 +39,6 @@ typedef struct {
     int32_t value;     /* 参数值: 亮度0-100 / 温度16-30 / 百分比 ... */
     char room[32];     /* 房间: living_room / bedroom / kitchen ... */
 } mcp_smart_home_args_t;
-
-typedef struct {
-    char brand[16];    /* 品牌: gree / media / haier ... */
-    char device[16];   /* 设备类型: ac / tv / fan */
-    char cmd[16];      /* 命令: power_on / temp_26 / mode_cool ... */
-} mcp_ir_args_t;
-
-typedef struct {
-    int  remote_id;    /* 433 插座遥控ID */
-    char cmd[8];       /* on / off */
-} mcp_rf_args_t;
 
 typedef struct {
     char node_id[16];  /* 传感器节点ID: sensor_living */
@@ -74,8 +61,6 @@ void mcp_tools_register_all(void);
 
 /* 各工具实现（可被 MCP 调度器直接调用） */
 mcp_result_t mcp_smart_home_control(const mcp_smart_home_args_t *args);
-mcp_result_t mcp_ir_send(const mcp_ir_args_t *args);
-mcp_result_t mcp_rf_send(const mcp_rf_args_t *args);
 mcp_result_t mcp_query_sensor(const mcp_sensor_args_t *args);
 mcp_result_t mcp_nas_query(const mcp_nas_args_t *args);
 mcp_result_t mcp_scene_execute(const mcp_scene_args_t *args);
