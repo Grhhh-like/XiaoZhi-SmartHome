@@ -1,0 +1,58 @@
+scenes:
+  sleep:
+    confirm: "睡眠模式已执行：灯光已调暗，窗帘已关闭，空调已设置睡眠模式。"
+    actions:
+      - device: living_room_light
+        cmd: set_brightness
+        value: 5
+      - device: bedroom_light
+        cmd: off
+        value: 0
+      - device: living_room_curtain
+        cmd: close
+        value: 0
+      - device: bedroom_ac
+        cmd: set_temp
+        value: 26
+      - device: bedroom_plug
+        cmd: off
+        value: 0
+
+  home:
+    confirm: "欢迎回家，已为你打开客厅灯和窗帘。"
+    actions:
+      - device: living_room_light
+        cmd: set_brightness
+        value: 80
+      - device: living_room_curtain
+        cmd: open
+        value: 0
+
+  away:
+    confirm: "离家模式已执行，全屋已关闭。"
+    actions:
+      - device: living_room_light
+        cmd: off
+        value: 0
+      - device: bedroom_light
+        cmd: off
+        value: 0
+      - device: living_room_curtain
+        cmd: close
+        value: 0
+      - device: bedroom_ac
+        cmd: off
+        value: 0
+      - device: living_room_plug
+        cmd: off
+        value: 0
+
+  movie:
+    confirm: "影院模式已开启，灯光已调暗。"
+    actions:
+      - device: living_room_light
+        cmd: set_brightness
+        value: 15
+      - device: living_room_curtain
+        cmd: close
+        value: 0
