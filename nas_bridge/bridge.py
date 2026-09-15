@@ -14,6 +14,7 @@ import argparse
 import json
 import logging
 import os
+import urllib.parse
 import urllib.request
 
 from flask import Flask, request, jsonify
@@ -119,7 +120,6 @@ def main():
                         format="%(asctime)s [%(name)s] %(levelname)s %(message)s")
 
     global NAS_TYPE, NAS_HOST, NAS_USER, NAS_PASS, RAG_URL
-    import urllib.parse  # noqa: F401 (在函数内使用)
 
     parser = argparse.ArgumentParser(description="XiaoZhi SmartHome NAS Bridge")
     parser.add_argument("--nas-type", default="synology")
