@@ -22,7 +22,8 @@ idf.py build flash monitor
 | 文件 | 功能 |
 |---|---|
 | `main.c` | 入口：初始化各模块、注册 MCP 工具 |
-| `mcp_tools.c/h` | MCP 工具集：smart_home_control / query_sensor / nas_query / scene_execute（WiFi+BLE 双通道路由） |
+| `mcp_tools.c/h` | MCP 工具集：smart_home_control / robot_move / query_sensor / nas_query / scene_execute（WiFi+BLE 双通道路由） |
+| `motion.c/h` | 移动底盘：双 N20 电机差速 + 编码器 PID + 里程计 + 避障 |
 | `ble_gateway.c/h` | BLE 网关（Central）：扫描 XZ-* 节点、GATT 连接、控制/状态回读 |
 | `mqtt_bridge.c/h` | WiFi 联网 MQTT 桥（米家/Home Assistant 生态、自建设备） |
 | `sensor_fusion.c/h` | 多传感器融合（环境决策） |
