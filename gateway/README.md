@@ -1,11 +1,12 @@
 # 控制中枢网关
 
 局域网控制中枢服务（Python），可运行在 **树莓派 / NAS(Docker) / 局域网PC** 上。
+对应小智终端 **WiFi 联网（MQTT/HTTP）主通道**，参考米家智能家居模式。
 
 ## 功能
 
-- **MQTT Broker 桥接**：连接 EMQX/Mosquitto，转发小智终端与智能生态设备的控制/状态消息
-- **红外码库管理**：`ir_codes/` 存储空调/电视等品牌的 NEC/RAW 码，支持"学习录入"
+- **MQTT Broker 桥接**：连接 EMQX/Mosquitto，转发小智终端与智能生态设备（米家/Home Assistant/自建设备）的控制/状态消息
+- **设备管理**：米家 / Home Assistant 生态设备接入配置与状态聚合
 - **场景引擎**：`scenes.yaml` 声明场景动作组合，提供 REST API 触发
 - **设备状态聚合**：收集各通道设备状态，统一上报（供看板/小智回读确认）
 
@@ -21,10 +22,10 @@ python gateway.py --mqtt-broker 192.168.1.10 --config scenes.yaml
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `/api/status` | 全部设备状态 |
+| GET | `/api/devices` | 设备清单（米家/HA 生态接入） |
+| GET | `/api/scenes` | 场景清单 |
 | POST | `/api/device/{name}/cmd` | 发送设备指令 `{"cmd":"on","value":0}` |
 | POST | `/api/scene/{name}` | 触发场景 |
-| GET | `/api/ir/codes` | 列出红外码库 |
-| POST | `/api/ir/learn` | 学习录入红外码 |
 
 ## 场景配置示例 (scenes.yaml)
 
