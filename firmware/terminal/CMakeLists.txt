@@ -5,14 +5,12 @@ idf_component_register(
     SRCS
         "main.c"
         "mcp_tools.c"
-        "ir_remote.c"
-        "rf433.c"
+        "ble_gateway.c"
         "mqtt_bridge.c"
-        "espnow_mesh.c"
         "sensor_fusion.c"
         "proactive.c"
         "offline_cmd.c"
         "lcd_ui.c"
     INCLUDE_DIRS "."
-    REQUIRES driver esp_wifi nvs_flash esp_netif mqtt espnow
+    REQUIRES driver esp_wifi nvs_flash esp_netif mqtt bt
 )
