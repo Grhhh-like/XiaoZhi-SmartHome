@@ -16,6 +16,7 @@
 #include "mcp_tools.h"
 #include "ble_gateway.h"
 #include "mqtt_bridge.h"
+#include "motion.h"
 #include "sensor_fusion.h"
 #include "proactive.h"
 #include "offline_cmd.h"
@@ -43,6 +44,7 @@ void xiaozhi_smarthome_init(void)
 
     /* 外设 */
     lcd_ui_init();
+    motion_init();   /* 移动底盘 */
 
     /* 通信：WiFi 联网(MQTT) + 蓝牙 BLE 双通道（参考米家模式） */
     mqtt_bridge_init();
