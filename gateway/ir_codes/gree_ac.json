@@ -1,0 +1,26 @@
+{
+  "brand": "gree",
+  "device": "ac",
+  "protocol": "nec",
+  "note": "示例码库，实际使用请通过学习录入获取真实码",
+  "codes": {
+    "power_on":  {"addr": 0, "cmd": 8},
+    "power_off": {"addr": 0, "cmd": 8},
+    "mode_cool": {"addr": 0, "cmd": 9},
+    "mode_heat": {"addr": 0, "cmd": 10},
+    "mode_auto": {"addr": 0, "cmd": 11},
+    "temp_16":   {"addr": 0, "cmd": 16},
+    "temp_18":   {"addr": 0, "cmd": 18},
+    "temp_20":   {"addr": 0, "cmd": 20},
+    "temp_22":   {"addr": 0, "cmd": 22},
+    "temp_24":   {"addr": 0, "cmd": 24},
+    "temp_26":   {"addr": 0, "cmd": 26},
+    "temp_28":   {"addr": 0, "cmd": 28},
+    "temp_30":   {"addr": 0, "cmd": 30},
+    "fan_auto":  {"addr": 0, "cmd": 32},
+    "fan_low":   {"addr": 0, "cmd": 33},
+    "fan_mid":   {"addr": 0, "cmd": 34},
+    "fan_high":  {"addr": 0, "cmd": 35},
+    "swing":     {"addr": 0, "cmd": 36}
+  }
+}
