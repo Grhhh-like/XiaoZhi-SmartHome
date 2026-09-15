@@ -51,7 +51,7 @@ void xiaozhi_smarthome_init(void)
     ble_gateway_init();
 
     /* 智能层 */
-    sensor_fusion_init_placeholder();
+    sensor_fusion_init();
     proactive_init();
     offline_cmd_init();
 
@@ -87,10 +87,4 @@ bool on_voice_result_hook(const char *text)
 
     /* 在线：返回 false 表示继续走官方 LLM + MCP 流程 */
     return false;
-}
-
-/* ============ 兼容性封装 ============ */
-void sensor_fusion_init_placeholder(void)
-{
-    /* sensor_fusion 无独立初始化，占位保持 API 对称 */
 }
