@@ -6,7 +6,7 @@
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "offline_cmd.h"
-#include "espnow_mesh.h"
+#include "ble_gateway.h"
 
 static const char *TAG = "offline_cmd";
 
@@ -39,12 +39,12 @@ bool offline_is_active(void)
 static void exec_entry(const offline_cmd_entry_t *e)
 {
     if (strcmp(e->device, "all") == 0) {
-        /* 全屋广播 */
-        espnow_light_ctrl("living_room_light", e->cmd, e->value);
-        espnow_light_ctrl("bedroom_light", e->cmd, e->value);
-        espnow_light_ctrl("kitchen_light", e->cmd, e->value);
+        /* 全屋广播（BLE 逐个控制） */
+        ble_light_ctrl("living_room_light", e->cmd, e->value);
+        ble_light_ctrl("bedroom_light", e->cmd, e->value);
+        ble_light_ctrl("kitchen_light", e->cmd, e->value);
     } else {
-        espnow_light_ctrl(e->device, e->cmd, e->value);
+        ble_light_ctrl(e->device, e->cmd, e->value);
     }
     ESP_LOGI(TAG, "offline exec: %s %s %s", e->device, e->cmd, e->cmd);
 }
