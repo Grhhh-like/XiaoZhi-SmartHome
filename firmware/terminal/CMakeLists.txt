@@ -7,6 +7,7 @@ idf_component_register(
         "mcp_tools.c"
         "ble_gateway.c"
         "mqtt_bridge.c"
+        "motion.c"
         "sensor_fusion.c"
         "proactive.c"
         "offline_cmd.c"
