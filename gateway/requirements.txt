@@ -1,0 +1,4 @@
+paho-mqtt>=1.6
+flask>=2.0
+pyyaml>=5.4
+requests>=2.25
