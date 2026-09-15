@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小智·智家 控制看板</title>
+<style>
+  :root {
+    --bg: #0f172a; --card: #1e293b; --accent: #22d3ee;
+    --ok: #34d399; --warn: #fbbf24; --danger: #f87171;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: #e2e8f0; min-height: 100vh;
+  }
+  header {
+    padding: 24px 32px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #334155;
+  }
+  header h1 { font-size: 22px; color: var(--accent); }
+  header .status { font-size: 13px; color: #94a3b8; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot.on { background: var(--ok); } .dot.off { background: #475569; } .dot.warn { background: var(--warn); }
+  main { padding: 24px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--card); border-radius: 14px; padding: 20px;
+    border: 1px solid #334155;
+  }
+  .card h2 { font-size: 15px; color: #cbd5e1; margin-bottom: 14px; }
+  .device { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1e293b; }
+  .device:last-child { border-bottom: none; }
+  .device .name { font-size: 14px; }
+  .device .state { font-size: 13px; }
+  .btn {
+    background: #334155; color: #e2e8f0; border: none; border-radius: 8px;
+    padding: 6px 14px; font-size: 13px; cursor: pointer; margin-left: 6px;
+  }
+  .btn:hover { background: #475569; }
+  .btn.on { background: var(--accent); color: #0f172a; }
+  .scene-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .scene-btn {
+    background: #334155; border: 1px solid #475569; color: #e2e8f0;
+    padding: 14px; border-radius: 10px; font-size: 14px; cursor: pointer;
+    text-align: center;
+  }
+  .scene-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sensor-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .sensor { text-align: center; background: #0f172a; border-radius: 10px; padding: 14px 6px; }
+  .sensor .val { font-size: 20px; font-weight: 700; color: var(--accent); }
+  .sensor .label { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .log { max-height: 220px; overflow-y: auto; font-size: 12px; color: #94a3b8; }
+  .log div { padding: 4px 0; border-bottom: 1px solid #1e293b; }
+  .log .t { color: #475569; margin-right: 8px; }
+  .active { color: var(--ok); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🏠 小智·智家 控制看板</h1>
+  <div class="status"><span class="dot on" id="gwDot"></span><span id="gwStatus">网关连接中...</span></div>
+</header>
+
+<main>
+  <!-- 设备控制 -->
+  <div class="card">
+    <h2>💡 设备控制</h2>
+    <div id="devices"></div>
+  </div>
+
+  <!-- 传感器 -->
+  <div class="card">
+    <h2>🌡️ 环境感知</h2>
+    <div class="sensor-grid">
+      <div class="sensor"><div class="val" id="sTemp">--</div><div class="label">温度 ℃</div></div>
+      <div class="sensor"><div class="val" id="sHumi">--</div><div class="label">湿度 %</div></div>
+      <div class="sensor"><div class="val" id="sAir">--</div><div class="label">空气质量</div></div>
+      <div class="sensor"><div class="val" id="sLight">--</div><div class="label">光照 lux</div></div>
+    </div>
+  </div>
+
+  <!-- 场景 -->
+  <div class="card">
+    <h2>🎬 场景联动</h2>
+    <div class="scene-grid">
+      <button class="scene-btn" onclick="runScene('sleep')">🌙 睡眠模式</button>
+      <button class="scene-btn" onclick="runScene('home')">🏠 回家模式</button>
+      <button class="scene-btn" onclick="runScene('away')">🚪 离家模式</button>
+      <button class="scene-btn" onclick="runScene('movie')">🎬 影院模式</button>
+    </div>
+  </div>
+
+  <!-- 运行日志 -->
+  <div class="card">
+    <h2>📋 运行日志</h2>
+    <div class="log" id="log"></div>
+  </div>
+
+  <!-- NAS 知识中枢 -->
+  <div class="card">
+    <h2>📚 NAS 知识中枢</h2>
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <input id="nasQuery" placeholder='例如：明天上午有什么安排' style="flex:1; background:#0f172a; border:1px solid #334155; color:#e2e8f0; border-radius:8px; padding:8px 12px;">
+      <button class="btn" onclick="nasAsk()">询问</button>
+    </div>
+    <div id="nasAnswer" style="font-size:13px; color:#cbd5e1; line-height:1.6;"></div>
+  </div>
+</main>
+
+<script>
+// 网关地址（部署时改为实际网关 IP）
+const GW = 'http://127.0.0.1:5000';
+const NAS = 'http://127.0.0.1:8080/query';
+
+// 设备清单
+const DEVICES = [
+  { name: 'living_room_light', label: '客厅灯' },
+  { name: 'bedroom_light', label: '卧室灯' },
+  { name: 'living_room_curtain', label: '客厅窗帘' },
+  { name: 'bedroom_ac', label: '卧室空调' },
+  { name: 'bedroom_plug', label: '卧室插座' },
+];
+
+function log(msg) {
+  const el = document.getElementById('log');
+  const d = document.createElement('div');
+  d.innerHTML = `<span class="t">${new Date().toLocaleTimeString()}</span>${msg}`;
+  el.prepend(d);
+  while (el.children.length > 50) el.lastChild.remove();
+}
+
+function renderDevices(states = {}) {
+  const el = document.getElementById('devices');
+  el.innerHTML = '';
+  DEVICES.forEach(d => {
+    const st = states[d.name] || {};
+    const isOn = st.state === 'on' || st.value > 0;
+    const row = document.createElement('div');
+    row.className = 'device';
+    row.innerHTML = `
+      <span class="name">${d.label}</span>
+      <span>
+        <span class="state" style="margin-right:10px;">${isOn ? '开' : '关'}${st.value ? ` (${st.value})` : ''}</span>
+        <button class="btn ${isOn ? 'on' : ''}" onclick="deviceCmd('${d.name}','${isOn ? 'off' : 'on'}')">${isOn ? '关' : '开'}</button>
+      </span>`;
+    el.appendChild(row);
+  });
+}
+
+async function deviceCmd(name, cmd) {
+  try {
+    await fetch(`${GW}/api/device/${name}/cmd`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ cmd })
+    });
+    log(`发送指令: ${name} ${cmd}`);
+  } catch (e) { log('网关不可达'); }
+}
+
+async function runScene(name) {
+  try {
+    await fetch(`${GW}/api/scene/${name}`, { method: 'POST' });
+    log(`执行场景: ${name}`);
+  } catch (e) { log('网关不可达'); }
+}
+
+async function refresh() {
+  try {
+    const r = await fetch(`${GW}/api/status`);
+    const data = await r.json();
+    document.getElementById('gwStatus').textContent = '网关已连接';
+    document.getElementById('gwDot').className = 'dot on';
+    renderDevices(data.devices);
+    const s = data.devices['sensor_living'] || {};
+    if (s.value) {
+      // 简化为网关聚合值展示
+    }
+  } catch (e) {
+    document.getElementById('gwStatus').textContent = '网关离线';
+    document.getElementById('gwDot').className = 'dot warn';
+  }
+}
+
+async function nasAsk() {
+  const q = document.getElementById('nasQuery').value;
+  if (!q) return;
+  const el = document.getElementById('nasAnswer');
+  el.textContent = '查询中...';
+  try {
+    const r = await fetch(NAS, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ scope: 'calendar', query: q })
+    });
+    const data = await r.json();
+    el.textContent = '🎤 小智：' + data.answer;
+    log(`NAS 查询: ${q}`);
+  } catch (e) {
+    el.textContent = 'NAS 桥服务未就绪';
+  }
+}
+
+// 模拟传感器展示（生产环境由网关聚合推送）
+function demoSensors() {
+  setInterval(() => {
+    document.getElementById('sTemp').textContent = (25 + Math.random() * 3).toFixed(1);
+    document.getElementById('sHumi').textContent = (45 + Math.random() * 15).toFixed(0);
+    document.getElementById('sAir').textContent = (400 + Math.random() * 300).toFixed(0);
+    document.getElementById('sLight').textContent = (200 + Math.random() * 400).toFixed(0);
+  }, 3000);
+}
+
+refresh();
+demoSensors();
+setInterval(refresh, 5000);
+log('看板已加载，等待网关数据...');
+</script>
+</body>
+</html>
