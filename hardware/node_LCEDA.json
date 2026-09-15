@@ -1,0 +1,54 @@
+{
+  "name": "XiaoZhi-SmartHome-Node",
+  "version": "1.0.0",
+  "description": "小智·智家 智能节点板（ESP32-C3 通用底板 + 外设扩展）",
+  "board": {
+    "width_mm": 40.0,
+    "height_mm": 40.0,
+    "layers": 2
+  },
+  "components": [
+    {
+      "ref": "U1",
+      "value": "ESP32-C3-SuperMini",
+      "package": "SMD-MODULE-26",
+      "designator": "节点核心"
+    },
+    {
+      "ref": "J1",
+      "value": "USB-C",
+      "package": "USB-C-16P",
+      "designator": "供电/烧录"
+    },
+    {
+      "ref": "J2",
+      "value": "PH2.0-4P",
+      "package": "PH2.0",
+      "designator": "外设扩展"
+    },
+    {
+      "ref": "U2",
+      "value": "AMS1117-3.3",
+      "package": "SOT-223",
+      "designator": "LDO"
+    },
+    {
+      "ref": "J3",
+      "value": "XH2.54-4P",
+      "package": "XH2.54",
+      "designator": "传感器接口"
+    }
+  ],
+  "nets": [
+    "VCC_3V3",
+    "GND",
+    "GPIO3",
+    "GPIO4",
+    "GPIO5",
+    "GPIO6"
+  ],
+  "notes": [
+    "通用底板，外设（灯/窗帘/插座/传感器）通过 J2/J3 扩展",
+    "具体外设电路参考 firmware/node/ 各节点定义"
+  ]
+}
