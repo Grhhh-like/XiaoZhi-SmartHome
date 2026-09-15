@@ -12,18 +12,17 @@
 
 ## 终端主控板（ESP32-S3）
 
-- ESP32-S3-WROOM-1 N8R8 模组
+- ESP32-S3-WROOM-1 N8R8 模组（WiFi + BLE 双模，参考米家模式）
 - 双 MEMS 麦克风（INMP441）——语音交互
 - I2S 功放 MAX98357A + 3W 喇叭
 - 1.28" GC9A01 圆屏（表情 UI）
 - WS2812 灯带 ×8（状态呼吸灯）
-- 红外发射（38kHz，控制老家电）
-- 433MHz 发射模块（FS1000A，无线插座）
+- WiFi 天线（2.4G，MQTT/HTTP 联网通道）
 - 5V→3.3V 电源
 
 ## 智能节点板（ESP32-C3）
 
-统一底板 + 外设扩展：
+统一底板 + 外设扩展（BLE 从机，广播名 XZ-<type>-<id>）：
 
 - ESP32-C3 SuperMini 核心
 - 灯节点：MOSFET 调光 + WS2812
