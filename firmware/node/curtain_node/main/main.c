@@ -8,7 +8,7 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
-#include "espnow_node.h"
+#include "ble_node.h"
 
 static const char *TAG = "curtain_node";
 
@@ -77,22 +77,20 @@ static void move_to(uint8_t target)
     ESP_LOGI(TAG, "curtain position -> %d%%", s_position);
 }
 
-static void on_ctrl(uint8_t cmd, const uint8_t *data, int len)
+static void on_ctrl(const char *cmd, int32_t value)
 {
-    switch (cmd) {
-    case CMD_ON:       /* 打开 */
+    if (!cmd) {
+        return;
+    }
+    if (strcmp(cmd, "open") == 0) {
         move_to(100);
-        break;
-    case CMD_OFF:      /* 关闭 */
+    } else if (strcmp(cmd, "close") == 0) {
         move_to(0);
-        break;
-    case CMD_SET_VALUE:
-        if (len >= 1) {
-            move_to(data[0] > 100 ? 100 : data[0]);
-        }
-        break;
-    default:
-        break;
+    } else if (strcmp(cmd, "stop") == 0) {
+        s_running = false;
+        motor_off();
+    } else if (strcmp(cmd, "set_position") == 0) {
+        move_to(value > 100 ? 100 : (uint8_t)value);
     }
 }
 
@@ -112,6 +110,6 @@ void app_main(void)
     };
     gpio_config(&in);
 
-    espnow_node_init(NODE_CURTAIN, NODE_ID, NULL, on_ctrl);
+    ble_node_init(NODE_CURTAIN, NODE_ID, on_ctrl);
     ESP_LOGI(TAG, "curtain node ready, id=%08X", NODE_ID);
 }
