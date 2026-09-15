@@ -13,14 +13,14 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "hardware")
 
 
 def build_terminal_project():
-    """终端主控板工程"""
+    """机器人终端主控板工程（含移动底盘接口）"""
     return {
         "name": "XiaoZhi-SmartHome-Terminal",
-        "version": "1.1.0",
-        "description": "小智·智家 终端主控板（ESP32-S3 + 双麦 + 喇叭 + 圆屏 + WiFi/BLE 双模）",
+        "version": "2.0.0",
+        "description": "小智·智家 移动机器人终端（ESP32-S3 + 双麦 + 喇叭 + 圆屏 + 差速底盘 + WiFi/BLE）",
         "board": {
-            "width_mm": 80.0,
-            "height_mm": 60.0,
+            "width_mm": 100.0,
+            "height_mm": 80.0,
             "layers": 2,
         },
         "components": [
@@ -30,20 +30,32 @@ def build_terminal_project():
             {"ref": "U4",  "value": "MAX98357A", "package": "TSSOP-16", "designator": "I2S功放"},
             {"ref": "U5",  "value": "GC9A01", "package": "COB-1.28", "designator": "圆屏"},
             {"ref": "U6",  "value": "WS2812", "package": "SMD-5050", "designator": "RGB灯带"},
+            {"ref": "U7",  "value": "TB6612FNG", "package": "SSOP-24", "designator": "电机驱动"},
+            {"ref": "U8",  "value": "MPU6050", "package": "QFN-24", "designator": "IMU"},
+            {"ref": "U9",  "value": "HC-SR04", "package": "THT-4", "designator": "超声波避障"},
+            {"ref": "M1",  "value": "N20+编码器", "package": "MOTOR-N20", "designator": "左轮电机"},
+            {"ref": "M2",  "value": "N20+编码器", "package": "MOTOR-N20", "designator": "右轮电机"},
+            {"ref": "BT1", "value": "18650×3", "package": "BATTERY-3S", "designator": "锂电池组"},
+            {"ref": "U10", "value": "MP1584-5V", "package": "SOT-23-5", "designator": "DC-DC 5V"},
+            {"ref": "U11", "value": "AMS1117-3.3", "package": "SOT-223", "designator": "LDO"},
             {"ref": "ANT1", "value": "2.4G-Antenna", "package": "PCB-IPEX", "designator": "WiFi/BLE天线"},
-            {"ref": "U7",  "value": "AMS1117-3.3", "package": "SOT-223", "designator": "LDO"},
             {"ref": "J1",  "value": "USB-C", "package": "USB-C-16P", "designator": "供电/烧录"},
             {"ref": "J2",  "value": "PH2.0-4P", "package": "PH2.0", "designator": "喇叭接口"},
             {"ref": "J3",  "value": "PH2.0-4P", "package": "PH2.0", "designator": "灯带接口"},
+            {"ref": "J4",  "value": "XH2.54-6P", "package": "XH2.54", "designator": "左电机+编码器"},
+            {"ref": "J5",  "value": "XH2.54-6P", "package": "XH2.54", "designator": "右电机+编码器"},
         ],
         "nets": [
-            "VCC_3V3", "GND", "I2S_SCK", "I2S_WS", "I2S_SD_OUT",
+            "VCC_5V", "VCC_3V3", "GND", "I2S_SCK", "I2S_WS", "I2S_SD_OUT",
             "ANT_2G4", "SPI_CLK", "SPI_MOSI", "SPI_CS", "GPIO_DIMMER",
+            "PWM_A", "PWM_B", "AIN1", "AIN2", "BIN1", "BIN2",
+            "ENC_L_A", "ENC_L_B", "ENC_R_A", "ENC_R_B", "I2C_SDA", "I2C_SCL", "ECHO", "TRIG",
         ],
         "notes": [
             "此为起始工程，原理图器件清单与网络已建立，连线/布线/DRC 请在嘉立创EDA专业版中完成",
-            "麦克风阵列建议间距 4cm 以支持波束指向",
+            "主控 5V 与电机 12V 分离供电，电机电源走粗线并加去耦电容",
             "WiFi/BLE 天线走线注意阻抗匹配（2.4G），天线区下方铺地挖空",
+            "编码器信号加 10kΩ 上拉与 RC 滤波",
         ],
     }
 
