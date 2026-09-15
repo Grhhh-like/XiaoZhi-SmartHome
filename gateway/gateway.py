@@ -29,7 +29,11 @@ scenes = {}                 # name -> {actions:[...], confirm:str}
 # ---------------- MQTT ----------------
 class MqttBridge:
     def __init__(self, broker, port=1883, user=None, password=None):
-        self.client = mqtt.Client()
+        # 兼容 paho-mqtt 1.x / 2.x API
+        try:
+            self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
+        except (AttributeError, TypeError):
+            self.client = mqtt.Client()
         if user:
             self.client.username_pw_set(user, password)
         self.client.on_connect = self._on_connect
@@ -80,7 +84,13 @@ def execute_scene(mqtt: MqttBridge, name: str):
     if name not in scenes:
         return {"ok": False, "msg": f"scene not found: {name}"}
     scene = scenes[name]
-    for action in scene.get("actions", []):
+    actions = scene.get("actions", [])
+    if not actions:
+        return {"ok": False, "msg": f"scene {name} has no actions"}
+    for action in actions:
+        if "device" not in action or "cmd" not in action:
+            log.warning("bad action in scene %s: %s", name, action)
+            continue
         mqtt.publish_cmd(
             action["device"],
             action["cmd"],
