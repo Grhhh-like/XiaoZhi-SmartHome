@@ -15,11 +15,9 @@
 | 喇叭 | 3W 8Ω + MAX98357A | 1 | I2S 功放 |
 | 屏幕 | 1.28" GC9A01 圆屏 | 1 | 表情 UI |
 | 灯带 | WS2812 ×8 | 1 | 呼吸灯反馈 |
-| 红外 | 红外发射管 + 8550 驱动 | 1 | 38kHz |
-| 433 | 433MHz 发射模块（FS1000A） | 1 | 无线插座控制 |
 | 电源 | 5V 2A 适配器 + 稳压 | 1 | |
 
-### 1.2 智能节点（ESP-NOW 从机）
+### 1.2 智能节点（BLE 从机）
 
 | 节点 | 核心 | 外设 |
 |---|---|---|
@@ -45,7 +43,7 @@ idf.py menuconfig        # 配置麦克风/喇叭/屏幕外设
 idf.py build flash monitor
 ```
 
-> 详细配置参考 xiaozhi-esp32 官方文档。本仓库提供的是 **MCP 工具集 + 四通道控制 + 主动引擎** 的二次开发模块。
+> 详细配置参考 xiaozhi-esp32 官方文档。本仓库提供的是 **MCP 工具集 + WiFi/BLE 双通道控制 + 主动引擎** 的二次开发模块。
 
 ### 2.2 MCP 工具注册
 
@@ -53,10 +51,8 @@ idf.py build flash monitor
 
 | 工具名 | 参数 | 说明 |
 |---|---|---|
-| `smart_home_control` | device, cmd, value | 通用控制：灯/插座/窗帘/空调 |
-| `ir_send` | brand, device, cmd | 红外：空调/电视/风扇 |
-| `rf_send` | remote_id, cmd | 433：无线插座 |
-| `query_sensor` | node_id, type | 查询传感器节点 |
+| `smart_home_control` | device, cmd, value | 通用控制（WiFi联网/BLE 双通道路由）：灯/插座/窗帘/空调 |
+| `query_sensor` | node_id, type | 查询 BLE 传感器节点 |
 | `nas_query` | scope, query | NAS 知识中枢查询 |
 | `scene_execute` | scene | 场景联动 |
 
@@ -66,14 +62,14 @@ idf.py build flash monitor
 
 ## 3. 节点固件
 
-每个节点独立工程，统一 ESP-NOW 协议（见 `firmware/node/README.md`）：
+每个节点独立工程，统一 BLE GATT 协议（见 `firmware/node/README.md`）：
 
 ```bash
 idf.py set-target esp32c3
 idf.py build flash monitor
 ```
 
-配置项：`NODE_TYPE`（light/curtain/plug/sensor）、`NODE_ID`、主节点 MAC。
+配置项：`NODE_TYPE`（light/curtain/plug/sensor）、`NODE_ID`、BLE 广播名（`XZ-<type>-<id>`）。
 
 ## 4. 控制中枢网关（可选，树莓派/NAS/PC）
 
@@ -84,8 +80,8 @@ python gateway.py --mqtt-broker 192.168.1.10 --config scenes.yaml
 ```
 
 功能：
-- MQTT Broker 桥接（EMQX/Mosquitto）
-- 红外码库管理（`ir_codes/`，支持学习录入）
+- MQTT Broker 桥接（EMQX/Mosquitto），WiFi 联网通道
+- 设备管理（米家/Home Assistant 生态接入配置）
 - 场景引擎（`scenes.py`）
 - 设备状态聚合上报
 
@@ -105,12 +101,11 @@ python rag_server.py --index ./index --docs ./家庭文档
 ## 7. 验证清单
 
 - [ ] 小智唤醒 + 对话正常
-- [ ] "打开客厅灯" → ESP-NOW 灯节点点亮
-- [ ] "空调 26 度" → 红外发射，空调响应
-- [ ] 无线插座 433 控制
-- [ ] MQTT 桥接 Home Assistant 设备
+- [ ] "打开客厅灯" → BLE 灯节点点亮
+- [ ] "空调 26 度" → WiFi 联网控制空调（米家/HA）
+- [ ] MQTT 桥接 Home Assistant / 米家生态设备
 - [ ] "现在室温多少" → 传感器节点回读
 - [ ] "明天上午日程" → NAS 日历播报
 - [ ] 睡眠模式场景联动
-- [ ] 断网时"打开客厅灯"本地降级
+- [ ] 断网时"打开客厅灯"本地 BLE 降级控制
 - [ ] 主动提醒（温度异常/久坐/晨报）
