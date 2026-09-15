@@ -16,22 +16,21 @@ def build_terminal_project():
     """终端主控板工程"""
     return {
         "name": "XiaoZhi-SmartHome-Terminal",
-        "version": "1.0.0",
-        "description": "小智·智家 终端主控板（ESP32-S3 + 双麦 + 喇叭 + 圆屏 + 红外 + 433）",
+        "version": "1.1.0",
+        "description": "小智·智家 终端主控板（ESP32-S3 + 双麦 + 喇叭 + 圆屏 + WiFi/BLE 双模）",
         "board": {
             "width_mm": 80.0,
             "height_mm": 60.0,
             "layers": 2,
         },
         "components": [
-            {"ref": "U1",  "value": "ESP32-S3-WROOM-1", "package": "SMD-MODULE-38", "designator": "主控模组"},
+            {"ref": "U1",  "value": "ESP32-S3-WROOM-1", "package": "SMD-MODULE-38", "designator": "主控模组(WiFi+BLE)"},
             {"ref": "U2",  "value": "INMP441", "package": "LGA-4", "designator": "麦克风1"},
             {"ref": "U3",  "value": "INMP441", "package": "LGA-4", "designator": "麦克风2"},
             {"ref": "U4",  "value": "MAX98357A", "package": "TSSOP-16", "designator": "I2S功放"},
             {"ref": "U5",  "value": "GC9A01", "package": "COB-1.28", "designator": "圆屏"},
             {"ref": "U6",  "value": "WS2812", "package": "SMD-5050", "designator": "RGB灯带"},
-            {"ref": "Q1",  "value": "IR-LED-940nm", "package": "DIP-2", "designator": "红外发射"},
-            {"ref": "Q2",  "value": "FS1000A", "package": "DIP-3", "designator": "433发射"},
+            {"ref": "ANT1", "value": "2.4G-Antenna", "package": "PCB-IPEX", "designator": "WiFi/BLE天线"},
             {"ref": "U7",  "value": "AMS1117-3.3", "package": "SOT-223", "designator": "LDO"},
             {"ref": "J1",  "value": "USB-C", "package": "USB-C-16P", "designator": "供电/烧录"},
             {"ref": "J2",  "value": "PH2.0-4P", "package": "PH2.0", "designator": "喇叭接口"},
@@ -39,12 +38,12 @@ def build_terminal_project():
         ],
         "nets": [
             "VCC_3V3", "GND", "I2S_SCK", "I2S_WS", "I2S_SD_OUT",
-            "IR_TX", "RF_TX", "SPI_CLK", "SPI_MOSI", "SPI_CS", "GPIO_DIMMER",
+            "ANT_2G4", "SPI_CLK", "SPI_MOSI", "SPI_CS", "GPIO_DIMMER",
         ],
         "notes": [
             "此为起始工程，原理图器件清单与网络已建立，连线/布线/DRC 请在嘉立创EDA专业版中完成",
             "麦克风阵列建议间距 4cm 以支持波束指向",
-            "红外发射管串联 100Ω 限流电阻",
+            "WiFi/BLE 天线走线注意阻抗匹配（2.4G），天线区下方铺地挖空",
         ],
     }
 
