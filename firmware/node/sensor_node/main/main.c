@@ -9,7 +9,7 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "driver/i2c.h"
-#include "espnow_node.h"
+#include "ble_node.h"
 
 static const char *TAG = "sensor_node";
 
@@ -91,14 +91,17 @@ static void sample_and_report(void)
     float air = read_air();
     float light = read_light();
 
-    espnow_node_report_sensor(temp, humi, air, light);
+    ble_node_report_sensor(temp, humi, air, light);
     ESP_LOGI(TAG, "report: %.1fC %.1f%% air=%.0fppm lux=%.0f", temp, humi, air, light);
 }
 
-static void on_ctrl(uint8_t cmd, const uint8_t *data, int len)
+static void on_ctrl(const char *cmd, int32_t value)
 {
-    (void)data; (void)len;
-    if (cmd == CMD_QUERY) {
+    (void)value;
+    if (!cmd) {
+        return;
+    }
+    if (strcmp(cmd, "query") == 0) {
         sample_and_report();
     }
 }
@@ -106,7 +109,7 @@ static void on_ctrl(uint8_t cmd, const uint8_t *data, int len)
 void app_main(void)
 {
     i2c_init();
-    espnow_node_init(NODE_SENSOR, NODE_ID, NULL, on_ctrl);
+    ble_node_init(NODE_SENSOR, NODE_ID, on_ctrl);
     ESP_LOGI(TAG, "sensor node ready, id=%08X, interval=%ds", NODE_ID, REPORT_INTERVAL_S);
 
     while (1) {
